@@ -6,11 +6,22 @@ export default function Navbar({ cartCount = 0, onLogoClick, onCartClick }) {
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         
         {/* Logo */}
-        <div className="flex-shrink-0" onClick={onLogoClick}>
-          <span className="text-2xl font-black tracking-tight text-[#3E0202] cursor-pointer select-none">
-            Flipazon<span className="text-[#BA6FA9]"></span>
-          </span>
+        <div className="flex-shrink-0 cursor-pointer select-none group" onClick={onLogoClick}>
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#3E0202]/5 to-[#BA6FA9]/5 px-3 py-1.5 rounded-lg border border-[#BA6FA9]/10 hover:border-[#BA6FA9]/30 transition-all duration-300">
+                
+                {/* Brand Icon */}
+                <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#3E0202] text-white font-black text-sm tracking-tighter shadow-sm group-hover:bg-[#BA6FA9] transition-colors duration-300">
+                F
+                </span>
+                
+                {/* Brand Text */}
+                <span className="text-xl font-black tracking-tight text-[#3E0202]">
+                Flip<span className="text-[#BA6FA9] group-hover:text-[#3E0202] transition-colors duration-300">azon</span>
+                </span>
+                
+            </div>
         </div>
+
 
         {/* Search Bar*/}
         <div className="flex-grow max-w-2xl mx-4">

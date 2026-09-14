@@ -24,7 +24,7 @@ export default function Orders({ orders, onNavigateHome }) {
               <div className="flex flex-wrap justify-between items-center border-b border-gray-100 pb-4 mb-4 gap-2">
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase">Order ID</p>
-                  <p className="text-sm font-mono font-bold text-gray-700">#FLIP-{1000 + index}</p>
+                  <p className="text-sm font-mono font-bold text-gray-700">#AX7VQ98Z-{1000 + index}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 font-bold uppercase text-right">Status</p>
@@ -45,7 +45,7 @@ export default function Orders({ orders, onNavigateHome }) {
                 ))}
               </div>
 
-              {/* Order Grand Total summary footer */}
+              {/* Order Total summary footer */}
               <div className="border-t border-gray-100 pt-4 mt-4 flex justify-between items-center">
                 <span className="text-sm font-bold text-gray-600">Amount Paid</span>
                 <span className="text-base font-black text-[#3E0202]">₹{order.total.toLocaleString('en-IN')}</span>
