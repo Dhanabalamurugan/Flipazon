@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Card from './components/Card';
-import Cart from './pages/Cart'; 
+import Cart from './pages/Cart';
+import Home from './pages/Home';
+import Orders from './pages/Orders'; // Import our new Orders file page
 
 const MOCK_PRODUCTS = [
   { id: 1, name: "Wireless Noise-Canceling Headphones", price: 12499, category: "Electronics" },
@@ -16,6 +18,9 @@ const CATEGORIES = ["Electronics", "Clothing", "Books"];
 export default function App() {
   const [currentView, setCurrentView] = useState("home");
   const [cartItems, setCartItems] = useState([]);
+  
+  // Array state to save historical placed orders
+  const [orders, setOrders] = useState([]);
 
   const handleAddToCart = (product) => {
     setCartItems((prevItems) => {
@@ -35,8 +40,20 @@ export default function App() {
         .map((item) =>
           item.id === id ? { ...item, quantity: item.quantity + change } : item
         )
-        .filter((item) => item.quantity > 0) // Automatically drops the product if total count is 0
+        .filter((item) => item.quantity > 0)
     );
+  };
+
+  // Logic: Takes items out of cart, creates a historical record, and redirects views
+  const handleCheckout = () => {
+    const newOrder = {
+      items: [...cartItems],
+      total: totalBillAmount
+    };
+    
+    setOrders([newOrder, ...orders]); // Saves order history block
+    setCartItems([]);                  // Resets cart count empty
+    setCurrentView("orders");          // Routes view to Orders confirmation screen
   };
 
   const totalCartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -56,27 +73,16 @@ export default function App() {
       
       <main className="max-w-7xl mx-auto p-6">
         
-        {/* HOME PAGE */}
+        {/* VIEW 1: HOME PAGE */}
         {currentView === "home" && (
-          <div>
-            <h1 className="text-2xl font-black text-gray-800 mb-6">Shop by Category</h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {CATEGORIES.map((cat) => (
-                <div 
-                  key={cat}
-                  onClick={() => setCurrentView(cat)}
-                  className="bg-white border border-gray-200 rounded-xl p-8 text-center cursor-pointer shadow-sm hover:border-[#BA6FA9] hover:shadow-md transition-all duration-200 group"
-                >
-                  <h3 className="text-xl font-bold text-gray-700 group-hover:text-[#BA6FA9]">{cat}</h3>
-                  <p className="text-xs text-gray-400 mt-2">Explore items →</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Home 
+            categories={CATEGORIES} 
+            onSelectCategory={(cat) => setCurrentView(cat)} 
+          />
         )}
 
-        {/* CATEGORY GRIDS */}
-        {currentView !== "home" && currentView !== "cart" && (
+        {/* VIEW 2: CATEGORY GRIDS */}
+        {currentView !== "home" && currentView !== "cart" && currentView !== "orders" && (
           <div>
             <div className="flex items-center justify-between mb-6">
               <button 
@@ -101,13 +107,22 @@ export default function App() {
           </div>
         )}
 
-        {/* CART VIEW */}
+        {/* VIEW 3: CART PAGE */}
         {currentView === "cart" && (
           <Cart 
             cartItems={cartItems}
             totalBillAmount={totalBillAmount}
             onNavigateHome={() => setCurrentView("home")}
             onUpdateQuantity={handleUpdateQuantity}
+            onCheckout={handleCheckout}
+          />
+        )}
+
+        {/* MY ORDERS SCREEN */}
+        {currentView === "orders" && (
+          <Orders 
+            orders={orders} 
+            onNavigateHome={() => setCurrentView("home")} 
           />
         )}
 

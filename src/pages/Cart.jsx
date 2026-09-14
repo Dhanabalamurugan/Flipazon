@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Cart({ cartItems, totalBillAmount, onNavigateHome, onUpdateQuantity }) {
+export default function Cart({ cartItems, totalBillAmount, onNavigateHome, onUpdateQuantity, onCheckout }) {
   return (
     <div>
       <h2 className="text-2xl font-black text-gray-800 mb-6">Shopping Cart</h2>
@@ -56,8 +56,9 @@ export default function Cart({ cartItems, totalBillAmount, onNavigateHome, onUpd
               <span className="font-bold text-gray-800">Total Amount</span>
               <span className="font-black text-[#3E0202] text-xl">₹{totalBillAmount.toLocaleString('en-IN')}</span>
             </div>
-            <button className="w-full bg-[#3E0202] hover:bg-[#3E0202]/90 text-white font-bold py-3 rounded-lg mt-6 transition-colors">
-              Proceed to Checkout
+            <button onClick={onCheckout} className="w-full bg-[#3E0202] hover:bg-[#3E0202]/90 text-white font-bold py-3 rounded-lg mt-6 transition-colors"
+            >
+                Proceed to Checkout
             </button>
           </div>
 
