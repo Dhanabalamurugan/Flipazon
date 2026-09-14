@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Card from './components/Card';
+import Cart from './pages/Cart'; 
 
-// Dummy dataset 
 const MOCK_PRODUCTS = [
   { id: 1, name: "Wireless Noise-Canceling Headphones", price: 12499, category: "Electronics" },
   { id: 2, name: "Minimalist Leather Quartz Watch", price: 6999, category: "Electronics" },
@@ -13,29 +13,53 @@ const MOCK_PRODUCTS = [
 
 const CATEGORIES = ["Electronics", "Clothing", "Books"];
 
-
 export default function App() {
   const [currentView, setCurrentView] = useState("home");
-  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState([]);
 
-  const handleAddToCart = () => {
-    setCartCount(cartCount + 1);
+  const handleAddToCart = (product) => {
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(item => item.id === product.id);
+      if (existingItem) {
+        return prevItems.map(item =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prevItems, { ...product, quantity: 1 }];
+    });
   };
 
-  // Filter items based on the active category view state
+  const handleUpdateQuantity = (id, change) => {
+    setCartItems((prevItems) =>
+      prevItems
+        .map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + change } : item
+        )
+        .filter((item) => item.quantity > 0) // Automatically drops the product if total count is 0
+    );
+  };
+
+  const totalCartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalBillAmount = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
   const filteredProducts = MOCK_PRODUCTS.filter(
     product => product.category === currentView
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar cartCount = {cartCount} onLogoClick = {() => setCurrentView("home")} />
+      <Navbar 
+        cartCount={totalCartCount} 
+        onLogoClick={() => setCurrentView("home")} 
+        onCartClick={() => setCurrentView("cart")}
+      />
       
       <main className="max-w-7xl mx-auto p-6">
         
-        {/* HOME VIEW: Show Categories Grid */}
+        {/* HOME PAGE */}
         {currentView === "home" && (
           <div>
+            <h1 className="text-2xl font-black text-gray-800 mb-6">Shop by Category</h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {CATEGORIES.map((cat) => (
                 <div 
@@ -51,31 +75,40 @@ export default function App() {
           </div>
         )}
 
-        {/* CATEGORY VIEW */}
-        {currentView !== "home" && (
+        {/* CATEGORY GRIDS */}
+        {currentView !== "home" && currentView !== "cart" && (
           <div>
-            {/* Navigation back helper bar */}
             <div className="flex items-center justify-between mb-6">
               <button 
                 onClick={() => setCurrentView("home")}
-                className="text-sm font-semibold text-[#BA6FA9] hover:underline flex items-center gap-1"
+                className="text-sm font-semibold text-[#BA6FA9] hover:underline"
               >
-                Back
+                ← Back to Categories
               </button>
+              <h2 className="text-2xl font-black text-gray-800">{currentView}</h2>
             </div>
 
-            {/* Product Card Grid Loop */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.map((product) => (
                 <Card 
                   key={product.id}
                   name={product.name}
                   price={product.price}
-                  onAddToCart={handleAddToCart}
+                  onAddToCart={() => handleAddToCart(product)}
                 />
               ))}
             </div>
           </div>
+        )}
+
+        {/* CART VIEW */}
+        {currentView === "cart" && (
+          <Cart 
+            cartItems={cartItems}
+            totalBillAmount={totalBillAmount}
+            onNavigateHome={() => setCurrentView("home")}
+            onUpdateQuantity={handleUpdateQuantity}
+          />
         )}
 
       </main>
